@@ -5,6 +5,7 @@
     <h2>{{ lesson.course.title }} - {{ lesson.date.strftime('%d.%m.%Y') }}</h2>
     
     <form method="POST">
+        <!-- Planungsfelder (bestehend) -->
         <div>
             <label for="plan_field1">Planung für heute:</label>
             <textarea id="plan_field1" name="plan_field1" rows="4">{{ lesson.plan_field1 or '' }}</textarea>
@@ -19,6 +20,43 @@
             <label for="plan_field3">Planung für nächsten Tag:</label>
             <textarea id="plan_field3" name="plan_field3" rows="4">{{ lesson.plan_field3 or '' }}</textarea>
         </div>
+        
+        <!-- Anwesenheitsverwaltung -->
+        <h3>Anwesenheit</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Teilnehmer</th>
+                    <th>Status</th>
+                    <th>Minuten gefehlt</th>
+                    <th>Notiz</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for participant in participants %}
+                    {% set attendance = attendance_data.get(participant.id, {}) %}
+                    <tr>
+                        <td>{{ participant.name }}</td>
+                        <td>
+                            <select name="status_{{ participant.id }}">
+                                <option value="anwesend" {% if attendance.get('status') == 'anwesend' %}selected{% endif %}>Anwesend</option>
+                                <option value="abwesend" {% if attendance.get('status') == 'abwesend' %}selected{% endif %}>Abwesend</option>
+                                <option value="verspätet" {% if attendance.get('status') == 'verspätet' %}selected{% endif %}>Verspätet</option>
+                                <option value="verfrüht" {% if attendance.get('status') == 'verfrüht' %}selected{% endif %}>Verfrüht gegangen</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="minutes_{{ participant.id }}" 
+                                   value="{{ attendance.get('minutes_missed', 0) }}" min="0">
+                        </td>
+                        <td>
+                            <input type="text" name="note_{{ participant.id }}" 
+                                   value="{{ attendance.get('note', '') }}">
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         
         <button type="submit">Speichern</button>
     </form>

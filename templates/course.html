@@ -6,6 +6,25 @@
     <p>Start: {{ course.start_date.strftime('%d.%m.%Y') }}</p>
     <p>Ende: {{ course.end_date.strftime('%d.%m.%Y') }}</p>
     
+    <!-- Teilnehmerverwaltung -->
+    <h3>Teilnehmer</h3>
+    <ul>
+        {% for participant in course.participants %}
+            <li>
+                {{ participant.name }} 
+                {% if participant.contact %}({{ participant.contact }}){% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+    
+    <h4>Neuen Teilnehmer hinzufügen</h4>
+    <form method="POST">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="text" name="contact" placeholder="Kontaktinformation">
+        <button type="submit">Hinzufügen</button>
+    </form>
+    
+    <!-- Kurstermine -->
     <h3>Kurstermine</h3>
     <ul>
         {% for lesson in lessons %}
@@ -17,5 +36,11 @@
         {% endfor %}
     </ul>
     
+    <p>
+    <a href="{{ url_for('course_journal', course_id=course.id) }}">
+        Kurstagebuch als PDF herunterladen
+    </a>
+</p>
+
     <a href="{{ url_for('home') }}">Zurück zur Übersicht</a>
 {% endblock %}

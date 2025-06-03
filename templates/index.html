@@ -4,6 +4,34 @@
 {% block content %}
     <h2>Willkommen, {% if user %}{{ user.username }}{% else %}Gast{% endif %}!</h2>
     
+    <!-- Datumsauswahl -->
+    <section>
+        <h3>Kurse nach Datum filtern</h3>
+        <form method="POST" action="{{ url_for('home') }}">
+            <input type="date" name="date" value="{{ selected_date }}" required>
+            <button type="submit">Datum anzeigen</button>
+        </form>
+    </section>
+    
+    <!-- Angezeigte Kurstage -->
+    <section>
+        <h3>Kurse am {{ selected_date|format_date }}</h3>
+        {% if selected_lessons %}
+            <ul>
+                {% for lesson in selected_lessons %}
+                    <li>
+                        <a href="{{ url_for('lesson_detail', lesson_id=lesson.id) }}">
+                            {{ lesson.course.title }} - {{ lesson.date.strftime('%d.%m.%Y') }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Keine Kurse am {{ selected_date|format_date }}</p>
+        {% endif %}
+    </section>
+    
+    <!-- Heutige Kurse -->
     <section>
         <h3>Heutige Kurse</h3>
         {% if today_lessons %}
@@ -21,6 +49,7 @@
         {% endif %}
     </section>
     
+    <!-- Meine Kurse -->
     <section>
         <h3>Meine Kurse</h3>
         <ul>

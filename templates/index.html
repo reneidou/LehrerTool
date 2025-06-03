@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Startseite{% endblock %}
+
+{% block content %}
+    <h2>Willkommen, {% if user %}{{ user.username }}{% else %}Gast{% endif %}!</h2>
+    
+    <section>
+        <h3>Heutige Kurse</h3>
+        {% if today_lessons %}
+            <ul>
+                {% for lesson in today_lessons %}
+                    <li>
+                        <a href="{{ url_for('lesson_detail', lesson_id=lesson.id) }}">
+                            {{ lesson.course.title }} - {{ lesson.date.strftime('%d.%m.%Y') }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Keine Kurse heute</p>
+        {% endif %}
+    </section>
+    
+    <section>
+        <h3>Meine Kurse</h3>
+        <ul>
+            {% for course in courses %}
+                <li>
+                    <a href="{{ url_for('course_detail', course_id=course.id) }}">
+                        {{ course.title }} ({{ course.start_date.strftime('%d.%m.%Y') }} - {{ course.end_date.strftime('%d.%m.%Y') }})
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        
+        <h4>Neuen Kurs erstellen</h4>
+        <form method="POST" action="{{ url_for('create_course') }}">
+            <input type="text" name="title" placeholder="Kurstitel" required>
+            <input type="date" name="start_date" required>
+            <input type="date" name="end_date" required>
+            <button type="submit">Kurs erstellen</button>
+        </form>
+    </section>
+{% endblock %}
